@@ -21,16 +21,40 @@ The command list is read from `ConsoleScript.Commands` at runtime, so commands a
 | Common | Heal, stop bleeding, kill, starter kit, teleport, next layer, noclip, freecam, timescale, skill XP, fullbright, save & quit, open native console |
 | Items | Icon grid of 301 spawnable items, names follow the in-game language, with category filters and search |
 | Limbs | 9 limb cards showing skin/muscle health and injuries, with per-limb stop-bleeding, amputate, reattach |
+| Favorites | Saved commands on one page with one-click execution; parameterized ones jump back to the command list |
 | Commands | Full command list with search, favorites pinned on top, argument autocomplete |
 | Log | Console output echo — command failures show up here |
+| Settings | Hotkey rebinding, UI scale and opacity, behavior toggles, clear favorites, reset window |
 
 ## Screenshots
 
-![Items tab](docs/04-items.png)
+![Items tab](docs/02-items.png)
 
 Item icons come from each prefab's `SpriteRenderer`; names follow the game's language setting (the game ships English and Simplified Chinese).
 
 The window can be dragged by its title bar and resized from the bottom-right grip; position and size are saved the moment you release the mouse. Panel opacity is adjustable, so the game stays visible behind it.
+
+### Favorites
+
+Pin the commands you use most and skip the search every time.
+
+- Rows are sorted by name and show the command description; `Run` executes directly, `Args` jumps to the Commands tab with that command selected
+- Destructive commands (kill, reset skills, save and quit) still require a second click within 3 seconds
+- Favorites live in `General/Favorites` in the config file — the same set as the star in the Commands tab
+
+![Favorites tab](docs/03-favorites.png)
+
+### Settings
+
+A UI for the common config entries; changes take effect immediately.
+
+- **Hotkey**: click the button and press a key to rebind, `Esc` cancels; the menu ignores the hotkey while capturing
+- **Interface**: UI scale, panel opacity, dim background, and a one-click reset for the window position and size
+- **Behavior**: block character input, suppress the native console popup, close after executing, confirm destructive commands
+- **Favorites**: count and a clear button
+- **About**: version, repository link (copyable), config file path
+
+![Settings tab](docs/04-settings.png)
 
 ## Installation
 
@@ -54,7 +78,7 @@ Uninstall: delete the `BepInEx/plugins/QuickMenu/` folder. Nothing else is left 
 | `Esc` | Close the menu |
 | Drag the title bar | Move the window |
 | Drag the bottom-right grip (or right/bottom edge) | Resize the window |
-| Tabs | Common / Items / Limbs / Commands / Log |
+| Tabs | Common / Items / Limbs / Favorites / Commands / Log / Settings |
 
 While the menu is open, character input (movement, attacks, item use) is suppressed, but the game is **not paused** — the same behavior as the game's native console.
 
@@ -122,8 +146,11 @@ Casualties-Unknown-QuickMenu/
 │  ├─ ItemsPage.cs          Items tab
 │  ├─ ItemCatalog.cs        Item catalog and icons
 │  ├─ LimbsPage.cs          Limbs tab
+│  ├─ FavoritesPage.cs      Favorites tab
+│  ├─ FavoriteCommands.cs   Favorites store and persistence
 │  ├─ CommandListPage.cs    Commands tab
 │  ├─ LogPage.cs            Log tab
+│  ├─ SettingsPage.cs       Settings tab
 │  ├─ ConsoleBridge.cs      Single access layer to the game console
 │  ├─ QuickMenuState.cs     Open/closed state
 │  └─ Patches.cs            Harmony patches
@@ -148,6 +175,8 @@ Casualties-Unknown-QuickMenu/
 | Grid performance | Row-level virtualization: only visible rows are laid out |
 | Limb state | Reads public fields on `body.limbs` every frame; render-only, never mutates |
 | Limb actions | Reuses `setlimbfield`, `amputate`, `reattach` with the limb's `GameObject.name` |
+| Favorites | A single `FavoriteCommands` store writes through to the config; both pages share it |
+| Settings tab | Binds `ConfigEntry` directly: sliders persist when the menu closes, toggles and hotkey save immediately |
 
 All game-internal calls live in `src/ConsoleBridge.cs`, so a game update only requires changes in one file. Both patches implement `Prepare()`, which skips them gracefully when the target method disappears instead of breaking the plugin.
 

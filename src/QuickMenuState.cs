@@ -59,6 +59,10 @@ namespace CasualtiesQuickMenu
             }
 
             _open = false;
+            QuickMenuPlugin.CapturingKey = false;
+
+            // 设置页的滑杆类修改在关闭菜单时统一落盘。
+            QuickMenuPlugin.Instance?.Config.Save();
         }
 
         internal static void Notify(string message)

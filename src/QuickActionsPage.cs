@@ -105,6 +105,7 @@ namespace CasualtiesQuickMenu
             GUILayout.BeginHorizontal();
             GUILayout.Label("倍率", QuickMenuUI.Label, GUILayout.Width(40f));
             _timescale = GUILayout.HorizontalSlider(_timescale, 0.25f, 5f,
+                QuickMenuUI.SliderTrack, QuickMenuUI.SliderThumb,
                 GUILayout.MinWidth(140f), GUILayout.ExpandWidth(true), GUILayout.Height(22f));
             GUILayout.Label($"{_timescale:0.00}×", QuickMenuUI.Label, GUILayout.Width(70f));
 

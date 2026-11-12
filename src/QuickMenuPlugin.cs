@@ -21,6 +21,9 @@ namespace CasualtiesQuickMenu
         internal static ManualLogSource Log { get; private set; }
         internal static QuickMenuPlugin Instance { get; private set; }
 
+        /// <summary>设置页正在等待玩家按键时置位，避免热键把菜单自己关掉。</summary>
+        internal static bool CapturingKey { get; set; }
+
         internal static ConfigEntry<KeyCode> Hotkey { get; private set; }
         internal static ConfigEntry<bool> BlockGameInput { get; private set; }
         internal static ConfigEntry<bool> SuppressNativePopup { get; private set; }
@@ -73,7 +76,7 @@ namespace CasualtiesQuickMenu
             WindowY = Config.Bind("Interface", "WindowY", -1f,
                 "窗口左上角 Y 坐标；-1 表示自动居中。");
 
-            CommandListPage.Instance.LoadFavorites();
+            FavoriteCommands.Load();
 
             _harmony = new Harmony(PluginGuid);
             try
@@ -92,6 +95,11 @@ namespace CasualtiesQuickMenu
 
         private void Update()
         {
+            if (CapturingKey)
+            {
+                return;
+            }
+
             if (Hotkey.Value != KeyCode.None && Input.GetKeyDown(Hotkey.Value))
             {
                 QuickMenuState.Toggle();

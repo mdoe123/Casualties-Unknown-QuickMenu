@@ -14,7 +14,18 @@ namespace CasualtiesQuickMenu
         internal const float MinHeight = 560f;
         internal const float HeaderHeight = 62f;
 
-        private static readonly string[] TabNames = { "常用", "物品", "肢体", "全部命令", "日志" };
+        private static readonly string[] TabNames =
+        {
+            "常用", "物品", "肢体", "收藏", "全部命令", "日志", "设置"
+        };
+
+        internal const int TabCommon = 0;
+        internal const int TabItems = 1;
+        internal const int TabLimbs = 2;
+        internal const int TabFavorites = 3;
+        internal const int TabCommands = 4;
+        internal const int TabLog = 5;
+        internal const int TabSettings = 6;
 
         private static int _tab;
 
@@ -40,6 +51,8 @@ namespace CasualtiesQuickMenu
         internal static GUIStyle Label { get; private set; }
         internal static GUIStyle Muted { get; private set; }
         internal static GUIStyle Field { get; private set; }
+        internal static GUIStyle SliderTrack { get; private set; }
+        internal static GUIStyle SliderThumb { get; private set; }
         internal static GUIStyle SectionTitle { get; private set; }
         internal static GUIStyle Footer { get; private set; }
         internal static GUIStyle LogLine { get; private set; }
@@ -159,7 +172,7 @@ namespace CasualtiesQuickMenu
 
         private static Rect TabRect(Rect win, int index)
         {
-            return new Rect(win.x + 210f + index * 112f, win.y + 17f, 104f, 32f);
+            return new Rect(win.x + 180f + index * 92f, win.y + 17f, 86f, 32f);
         }
 
         private static Rect CloseRect(Rect win)
@@ -261,6 +274,18 @@ namespace CasualtiesQuickMenu
             QuickMenuPlugin.Instance?.Config.Save();
         }
 
+        /// <summary>恢复默认尺寸并重新居中，供设置页调用。</summary>
+        internal static void ResetLayout()
+        {
+            QuickMenuPlugin.WindowWidth.Value = 1020f;
+            QuickMenuPlugin.WindowHeight.Value = 690f;
+            QuickMenuPlugin.WindowX.Value = -1f;
+            QuickMenuPlugin.WindowY.Value = -1f;
+
+            QuickMenuPlugin.Instance?.Config.Save();
+            _layoutReady = false;
+        }
+
         // ---------- 绘制 ----------
 
         private static void DrawBackdrop(float vw, float vh)
@@ -323,17 +348,23 @@ namespace CasualtiesQuickMenu
             GUILayout.BeginArea(body);
             switch (_tab)
             {
-                case 0:
+                case TabCommon:
                     QuickActionsPage.Instance.Draw();
                     break;
-                case 1:
+                case TabItems:
                     ItemsPage.Instance.Draw();
                     break;
-                case 2:
+                case TabLimbs:
                     LimbsPage.Instance.Draw();
                     break;
-                case 3:
+                case TabFavorites:
+                    FavoritesPage.Instance.Draw();
+                    break;
+                case TabCommands:
                     CommandListPage.Instance.Draw();
+                    break;
+                case TabSettings:
+                    SettingsPage.Instance.Draw();
                     break;
                 default:
                     LogPage.Instance.Draw();
@@ -426,6 +457,17 @@ namespace CasualtiesQuickMenu
             GUI.DrawTextureWithTexCoords(draw, texture, uv, true);
         }
 
+        private static Texture2D Solid(Color color)
+        {
+            var tex = new Texture2D(1, 1, TextureFormat.RGBA32, false)
+            {
+                hideFlags = HideFlags.HideAndDontSave
+            };
+            tex.SetPixel(0, 0, color);
+            tex.Apply();
+            return tex;
+        }
+
         private static void Fill(Rect rect, Color color)
         {
             Color prev = GUI.color;
@@ -477,13 +519,30 @@ namespace CasualtiesQuickMenu
             CardValue = MakeLabel(12, TextColor);
             CardValue.alignment = TextAnchor.MiddleRight;
 
-            TabOn = MakeButton(15, FontStyle.Bold);
-            TabOff = MakeButton(15, FontStyle.Normal);
+            TabOn = MakeButton(13, FontStyle.Bold);
+            TabOff = MakeButton(13, FontStyle.Normal);
             Btn = MakeButton(15, FontStyle.Normal);
             BtnSmall = MakeButton(13, FontStyle.Normal);
 
             // 输入框保留引擎浅色底，文字继续用深色，白字会不可见。
             Field = new GUIStyle(GUI.skin.textField) { font = Cjk, fontSize = 14 };
+
+            // 引擎内置滑杆在深色面板上几乎看不见，换成自绘的浅色轨道与滑块。
+            SliderTrack = new GUIStyle(GUI.skin.horizontalSlider)
+            {
+                fixedHeight = 8f,
+                margin = new RectOffset(4, 4, 8, 8)
+            };
+            SliderTrack.normal.background = Solid(new Color(0.26f, 0.29f, 0.34f));
+
+            SliderThumb = new GUIStyle(GUI.skin.horizontalSliderThumb)
+            {
+                fixedWidth = 14f,
+                fixedHeight = 18f
+            };
+            SliderThumb.normal.background = Solid(new Color(0.78f, 0.84f, 0.94f));
+            SliderThumb.hover.background = Solid(new Color(0.90f, 0.94f, 1f));
+            SliderThumb.active.background = Solid(new Color(0.62f, 0.78f, 1f));
 
             _initialized = true;
         }
@@ -535,7 +594,7 @@ namespace CasualtiesQuickMenu
 
         internal static void Section(string title)
         {
-            GUILayout.Space(6f);
+            GUILayout.Space(3f);
             GUILayout.Label(title, SectionTitle);
         }
 

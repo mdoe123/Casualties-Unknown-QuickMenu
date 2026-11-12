@@ -13,7 +13,6 @@ namespace CasualtiesQuickMenu
         internal static readonly CommandListPage Instance = new CommandListPage();
 
         private readonly List<Command> _filtered = new List<Command>();
-        private readonly HashSet<string> _favorites = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         private readonly List<string> _recent = new List<string>();
 
         private string _search = string.Empty;
@@ -25,30 +24,6 @@ namespace CasualtiesQuickMenu
 
         private Command _selected;
         private string[] _args = Array.Empty<string>();
-
-        internal void LoadFavorites()
-        {
-            _favorites.Clear();
-
-            string raw = QuickMenuPlugin.Favorites?.Value;
-            if (string.IsNullOrEmpty(raw))
-            {
-                return;
-            }
-
-            foreach (string part in raw.Split(','))
-            {
-                if (!string.IsNullOrWhiteSpace(part))
-                {
-                    _favorites.Add(part.Trim());
-                }
-            }
-        }
-
-        private void SaveFavorites()
-        {
-            QuickMenuPlugin.Favorites.Value = string.Join(",", _favorites);
-        }
 
         internal void OnMenuOpened()
         {
@@ -129,8 +104,8 @@ namespace CasualtiesQuickMenu
 
         private int CompareCommands(Command a, Command b)
         {
-            bool fa = _favorites.Contains(a.name);
-            bool fb = _favorites.Contains(b.name);
+            bool fa = FavoriteCommands.Contains(a.name);
+            bool fb = FavoriteCommands.Contains(b.name);
 
             if (fa != fb)
             {
@@ -159,7 +134,7 @@ namespace CasualtiesQuickMenu
                     GUI.backgroundColor = new Color(0.30f, 0.50f, 0.80f);
                 }
 
-                string label = (_favorites.Contains(command.name) ? "★ " : string.Empty) + command.name;
+                string label = (FavoriteCommands.Contains(command.name) ? "★ " : string.Empty) + command.name;
                 if (GUILayout.Button(label, QuickMenuUI.BtnSmall,
                         GUILayout.Width(198f), GUILayout.Height(26f)))
                 {
@@ -243,7 +218,7 @@ namespace CasualtiesQuickMenu
                 ExecuteSelected();
             }
 
-            if (GUILayout.Button(_favorites.Contains(_selected.name) ? "取消收藏" : "收藏",
+            if (GUILayout.Button(FavoriteCommands.Contains(_selected.name) ? "取消收藏" : "收藏",
                     QuickMenuUI.Btn, GUILayout.Width(110f), GUILayout.Height(34f)))
             {
                 ToggleFavorite(_selected.name);
@@ -407,12 +382,23 @@ namespace CasualtiesQuickMenu
 
         private void ToggleFavorite(string name)
         {
-            if (!_favorites.Add(name))
+            FavoriteCommands.Toggle(name);
+            _filterKey = null;
+        }
+
+        /// <summary>供收藏页跳转：切到本页并选中指定命令。</summary>
+        internal void SelectByName(string name)
+        {
+            OnMenuOpened();
+
+            var command = ConsoleScript.SearchExact(name);
+            if (command == null)
             {
-                _favorites.Remove(name);
+                return;
             }
 
-            SaveFavorites();
+            Select(command);
+            _search = string.Empty;
             _filterKey = null;
         }
     }
