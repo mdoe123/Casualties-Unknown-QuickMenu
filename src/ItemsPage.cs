@@ -241,7 +241,7 @@ namespace CasualtiesQuickMenu
                 QuickMenuUI.FillRect(cell, new Color(1f, 1f, 1f, 0.08f));
             }
 
-            var iconRect = new Rect(cell.x + 9f, cell.y + 4f, cell.width - 18f, 58f);
+            var iconRect = new Rect(cell.x + 9f, cell.y + 2f, cell.width - 18f, 56f);
             QuickMenuUI.DrawSprite(iconRect, entry.Icon);
 
             if (entry.Icon == null)
@@ -249,7 +249,7 @@ namespace CasualtiesQuickMenu
                 GUI.Label(iconRect, "?", QuickMenuUI.CellIconFallback);
             }
 
-            var labelRect = new Rect(cell.x + 3f, cell.y + 62f, cell.width - 6f, 30f);
+            var labelRect = new Rect(cell.x + 3f, cell.y + 60f, cell.width - 6f, 34f);
             GUI.Label(labelRect, QuickMenuUI.Truncate(ItemCatalog.DisplayName(entry.Id), 12),
                 QuickMenuUI.CellLabel);
 

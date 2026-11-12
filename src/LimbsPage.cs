@@ -80,17 +80,17 @@ namespace CasualtiesQuickMenu
             QuickMenuUI.FillRect(card, new Color(1f, 1f, 1f, 0.05f));
 
             string title = string.IsNullOrEmpty(limb.fullName) ? limb.name : limb.fullName;
-            GUI.Label(new Rect(card.x + 12f, card.y + 8f, width - 24f, 24f),
+            GUI.Label(new Rect(card.x + 12f, card.y + 8f, width - 24f, 26f),
                 QuickMenuUI.Truncate(title, 14), QuickMenuUI.CardTitle);
 
             string status = BuildStatus(limb);
             bool severe = limb.dismembered || limb.broken || limb.infected || limb.bleedAmount > 0.05f;
-            GUI.Label(new Rect(card.x + 12f, card.y + 34f, width - 24f, 18f),
+            GUI.Label(new Rect(card.x + 12f, card.y + 36f, width - 24f, 20f),
                 QuickMenuUI.Truncate(status, 24),
                 severe ? QuickMenuUI.CardWarn : QuickMenuUI.CardSmall);
 
-            DrawBar(card.x + 12f, card.y + 58f, width - 24f, "皮肤", limb.skinHealth);
-            DrawBar(card.x + 12f, card.y + 80f, width - 24f, "肌肉", limb.muscleHealth);
+            DrawBar(card.x + 12f, card.y + 62f, width - 24f, "皮肤", limb.skinHealth);
+            DrawBar(card.x + 12f, card.y + 84f, width - 24f, "肌肉", limb.muscleHealth);
 
             var buttonWidth = Mathf.Floor((width - 30f) / 2f);
             float buttonY = card.y + CardHeight - 42f;
@@ -124,7 +124,7 @@ namespace CasualtiesQuickMenu
 
         private static void DrawBar(float x, float y, float width, string label, float value)
         {
-            GUI.Label(new Rect(x, y, 32f, 16f), label, QuickMenuUI.CardSmall);
+            GUI.Label(new Rect(x, y, 32f, 18f), label, QuickMenuUI.CardSmall);
 
             var track = new Rect(x + 34f, y + 4f, Mathf.Max(40f, width - 100f), 8f);
             QuickMenuUI.FillRect(track, new Color(0f, 0f, 0f, 0.45f));
@@ -140,7 +140,7 @@ namespace CasualtiesQuickMenu
                 QuickMenuUI.FillRect(new Rect(track.x, track.y, track.width * ratio, track.height), color);
             }
 
-            GUI.Label(new Rect(x + width - 60f, y, 60f, 16f),
+            GUI.Label(new Rect(x + width - 60f, y, 60f, 18f),
                 value.ToString("0"), QuickMenuUI.CardValue);
         }
 

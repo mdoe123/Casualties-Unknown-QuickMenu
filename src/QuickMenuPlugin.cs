@@ -16,7 +16,7 @@ namespace CasualtiesQuickMenu
     {
         public const string PluginGuid = "local.casualties.quickmenu";
         public const string PluginName = "Casualties Quick Menu";
-        public const string PluginVersion = "1.0.0";
+        public const string PluginVersion = "1.1.0";
 
         internal static ManualLogSource Log { get; private set; }
         internal static QuickMenuPlugin Instance { get; private set; }

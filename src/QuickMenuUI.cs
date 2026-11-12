@@ -556,6 +556,11 @@ namespace CasualtiesQuickMenu
                 fontStyle = style,
                 richText = true
             };
+
+            // 引擎默认 label 带有上下内边距，且动态字体在固定高度内会略微下沉，
+            // 导致汉字底部笔画被裁。这里清掉内边距并把文字整体上移 2px。
+            s.padding = new RectOffset(0, 0, 0, 0);
+            s.contentOffset = new Vector2(0f, -2f);
             s.normal.textColor = color;
             return s;
         }
@@ -569,6 +574,8 @@ namespace CasualtiesQuickMenu
                 fontSize = size,
                 fontStyle = style
             };
+
+            s.padding = new RectOffset(8, 8, 2, 2);
 
             s.normal.textColor = Color.white;
             s.hover.textColor = Color.white;
