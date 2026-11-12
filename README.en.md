@@ -166,6 +166,12 @@ The game launched very recently, so internal APIs may still shift. This mod patc
 
 For singleplayer and personal saves. Using cheat commands on a multiplayer server may violate its rules and affects other players — use your own judgment. The author is not responsible for corrupted saves or disabled achievements.
 
+## AI Disclosure
+
+The code and documentation in this repository were produced with AI assistance, primarily **DeepSeek-V4.1-Flash**, which handled implementation, debugging and writing. The author defined the requirements, performed the in-game verification and reviewed the final result.
+
+Every feature was tested against the real game (see Compatibility above), but AI-generated code may still contain edge cases that were not exercised. Assess the risk before use.
+
 ## License
 
 Licensed under the [GNU General Public License v3.0](LICENSE).
