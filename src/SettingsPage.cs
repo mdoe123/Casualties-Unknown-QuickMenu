@@ -15,6 +15,7 @@ namespace CasualtiesQuickMenu
 
         private Vector2 _scroll;
         private bool _capturing;
+        private float _draftScale = -1f;
 
         internal void Draw()
         {
@@ -30,7 +31,7 @@ namespace CasualtiesQuickMenu
             DrawHotkeyRow();
 
             QuickMenuUI.Section("界面");
-            DrawSliderRow("界面缩放", QuickMenuPlugin.UiScale, 0.6f, 2f);
+            DrawScaleRow();
             DrawSliderRow("面板不透明度", QuickMenuPlugin.Opacity, 0.3f, 1f);
             DrawToggleRow("压暗背景画面", QuickMenuPlugin.DimBackground);
 
@@ -201,6 +202,43 @@ namespace CasualtiesQuickMenu
             }
 
             GUILayout.EndHorizontal();
+        }
+
+        /// <summary>
+        /// 缩放滑杆：拖动过程中不立刻应用。
+        /// 缩放会改变 GUI 矩阵，鼠标坐标随之跳变，边拖边应用会产生数值抖动；
+        /// 因此先记草稿值，松开鼠标再生效。
+        /// </summary>
+        private void DrawScaleRow()
+        {
+            if (_draftScale < 0f)
+            {
+                _draftScale = QuickMenuPlugin.UiScale.Value;
+            }
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("界面缩放", QuickMenuUI.Label,
+                GUILayout.Width(LabelWidth), GUILayout.Height(26f));
+
+            float next = GUILayout.HorizontalSlider(_draftScale, 0.6f, 2f,
+                QuickMenuUI.SliderTrack, QuickMenuUI.SliderThumb,
+                GUILayout.Width(300f), GUILayout.Height(22f));
+
+            if (!Mathf.Approximately(next, _draftScale))
+            {
+                _draftScale = next;
+            }
+
+            GUILayout.Label(_draftScale.ToString("0.00"), QuickMenuUI.Label,
+                GUILayout.Width(56f), GUILayout.Height(26f));
+            GUILayout.EndHorizontal();
+
+            bool released = Event.current != null && Event.current.type == EventType.MouseUp;
+            if (released && !Mathf.Approximately(_draftScale, QuickMenuPlugin.UiScale.Value))
+            {
+                QuickMenuPlugin.UiScale.Value = _draftScale;
+                QuickMenuPlugin.Instance?.Config.Save();
+            }
         }
 
         private static void DrawSliderRow(string label, ConfigEntry<float> entry, float min, float max)

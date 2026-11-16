@@ -29,8 +29,12 @@ namespace CasualtiesQuickMenu
 
         private static int _tab;
 
-        /// <summary>窗口矩形，单位是 1920×1080 设计空间，随分辨率等比缩放。</summary>
+        /// <summary>实际绘制用的窗口矩形（可能因视口不足被临时压缩）。</summary>
         internal static Rect WindowRect = new Rect(0f, 0f, 1020f, 690f);
+
+        /// <summary>用户期望的窗口矩形。调大界面缩放导致窗口放不下时，只压缩绘制矩形，
+        /// 不动这里——缩回去时窗口能恢复原状，也不会把压缩后的尺寸写进配置。</summary>
+        private static Rect _desired = new Rect(0f, 0f, 1020f, 690f);
 
         private static bool _layoutReady;
         private static bool _logged;
@@ -161,10 +165,10 @@ namespace CasualtiesQuickMenu
                     y = (vh - h) * 0.5f;
                 }
 
-                WindowRect = new Rect(x, y, w, h);
+                _desired = new Rect(x, y, w, h);
             }
 
-            WindowRect = Clamp(WindowRect, vw, vh);
+            WindowRect = Clamp(_desired, vw, vh);
         }
 
         private static Rect Clamp(Rect rect, float vw, float vh)
@@ -228,14 +232,16 @@ namespace CasualtiesQuickMenu
                 if (_dragging)
                 {
                     var moved = new Rect(mouse.x - _dragOffset.x, mouse.y - _dragOffset.y, win.width, win.height);
-                    WindowRect = Clamp(moved, vw, vh);
+                    _desired = Clamp(moved, vw, vh);
+                    WindowRect = _desired;
                     e.Use();
                 }
                 else if (_resizing)
                 {
                     Vector2 delta = mouse - _resizeStart;
                     var resized = new Rect(win.x, win.y, _resizeOrigin.x + delta.x, _resizeOrigin.y + delta.y);
-                    WindowRect = Clamp(resized, vw, vh);
+                    _desired = Clamp(resized, vw, vh);
+                    WindowRect = _desired;
                     e.Use();
                 }
 
@@ -275,10 +281,10 @@ namespace CasualtiesQuickMenu
 
         private static void SaveLayout()
         {
-            QuickMenuPlugin.WindowX.Value = WindowRect.x;
-            QuickMenuPlugin.WindowY.Value = WindowRect.y;
-            QuickMenuPlugin.WindowWidth.Value = WindowRect.width;
-            QuickMenuPlugin.WindowHeight.Value = WindowRect.height;
+            QuickMenuPlugin.WindowX.Value = _desired.x;
+            QuickMenuPlugin.WindowY.Value = _desired.y;
+            QuickMenuPlugin.WindowWidth.Value = _desired.width;
+            QuickMenuPlugin.WindowHeight.Value = _desired.height;
 
             // 立即落盘：即使之后游戏被强制结束，窗口位置和尺寸也不会丢。
             QuickMenuPlugin.Instance?.Config.Save();
