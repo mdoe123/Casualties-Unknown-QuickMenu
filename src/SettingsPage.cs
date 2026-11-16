@@ -92,6 +92,27 @@ namespace CasualtiesQuickMenu
                 QuickMenuUI.Muted, GUILayout.Height(26f));
             GUILayout.EndHorizontal();
 
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("命令词典", QuickMenuUI.Label,
+                GUILayout.Width(LabelWidth), GUILayout.Height(26f));
+            GUILayout.Label($"已载入 {CommandText.EntryCount} 条", QuickMenuUI.Muted,
+                GUILayout.Width(110f), GUILayout.Height(26f));
+
+            if (GUILayout.Button("重新加载", QuickMenuUI.Btn,
+                    GUILayout.Width(88f), GUILayout.Height(26f)))
+            {
+                CommandText.Reload();
+                QuickMenuState.Notify($"命令词典已重新加载：{CommandText.EntryCount} 条");
+            }
+
+            if (GUILayout.Button("打开文件", QuickMenuUI.Btn,
+                    GUILayout.Width(88f), GUILayout.Height(26f)))
+            {
+                Application.OpenURL("file:///" + CommandText.UserFilePath.Replace('\\', '/'));
+            }
+
+            GUILayout.EndHorizontal();
+
             GUILayout.Label("配置文件：BepInEx/config/local.casualties.quickmenu.cfg",
                 QuickMenuUI.Muted, GUILayout.Height(22f));
 

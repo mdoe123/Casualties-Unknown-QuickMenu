@@ -22,7 +22,7 @@
 | 物品 | 301 个可生成物品的图标网格，按游戏语言显示名称，支持分类筛选与搜索 |
 | 肢体 | 9 张肢体卡片，显示皮肤/肌肉健康与伤病状态，可按肢体止血、断肢、接回 |
 | 收藏 | 收藏的命令集中在一页，一键执行；需要参数的跳回命令页填写 |
-| 全部命令 | 全部命令列表，支持搜索、收藏置顶、参数自动补全 |
+| 全部命令 | 全部命令列表，内置中文名与说明，中英双语可搜，支持收藏置顶与参数补全 |
 | 日志 | 控制台输出回显，命令失败的原因在这里 |
 | 设置 | 热键重绑定、界面缩放与不透明度、行为开关、清空收藏、重置窗口 |
 
@@ -84,6 +84,17 @@
 
 物品页与肢体页的操作都通过游戏自身的命令执行：生成物品等价于输入 `spawn <id> cursor 1 <数量>`，止血等价于 `setlimbfield <肢体> bleedAmount 0`。
 
+### 命令翻译
+
+游戏原生控制台是纯英文的——命令名与说明写死在 `ConsoleScript` 里，连官方中文包也没收录。本 Mod 在界面层做了一份词典，给它补上中文，**不修改游戏本身的任何数据**：原生控制台、其它 Mod、命令执行逻辑看到的仍是原始英文。
+
+- 词典文件：`BepInEx/config/QuickMenu/commands.zh-CN.json`，首次运行自动生成，可自行增删
+- 覆盖范围：基础游戏 49 条命令（含参数标签）；其它 Mod 注册的命令暂未收录，会原样显示英文
+- 回退链：用户词典 → 内置词典 → 游戏原文，任何一环缺失都不会影响显示
+- 改完词典后到「设置」页点「重新加载」即可生效，无需重启
+
+命令列表里未翻译的条目直接显示英文原名，一眼可辨；详情页标题始终是「中文名 · 英文 ID」，方便复制到原生控制台使用。
+
 ## 配置
 
 路径 `BepInEx/config/local.casualties.quickmenu.cfg`，首次启动自动生成。
@@ -96,7 +107,7 @@
 | `General/CloseAfterExecute` | `false` | 执行命令后自动关闭菜单 |
 | `General/ConfirmRiskyCommands` | `true` | 破坏性命令需 3 秒内二次确认 |
 | `General/Favorites` | 空 | 收藏的命令名，由界面维护 |
-| `Interface/UiScale` | `1.0` | 界面缩放（0.6–2.0） |
+| `Interface/UiScale` | `1.2` | 界面缩放（0.6–2.0） |
 | `Interface/Opacity` | `0.92` | 面板不透明度（0.3–1.0） |
 | `Interface/DimBackground` | `true` | 是否压暗背后画面 |
 | `Interface/WindowWidth` / `WindowHeight` | `1020` / `690` | 窗口尺寸（设计单位） |
@@ -148,6 +159,7 @@ Casualties-Unknown-QuickMenu/
 │  ├─ LimbsPage.cs          肢体页
 │  ├─ FavoritesPage.cs      收藏页
 │  ├─ FavoriteCommands.cs   收藏状态与持久化
+│  ├─ CommandText.cs        命令文本翻译（只影响显示）
 │  ├─ CommandListPage.cs    全部命令页
 │  ├─ LogPage.cs            日志页
 │  ├─ SettingsPage.cs       设置页
@@ -175,6 +187,7 @@ Casualties-Unknown-QuickMenu/
 | 网格性能 | 行级虚拟化，只布局可见行，避免 300 个格子每帧全量绘制 |
 | 肢体状态 | 每帧读取 `body.limbs` 的 `skinHealth` / `muscleHealth` / `bleedAmount` / `broken` 等公开字段，仅渲染不修改 |
 | 肢体操作 | 复用 `setlimbfield`、`amputate`、`reattach`，参数用肢体的 `GameObject.name` |
+| 命令翻译 | 词典 JSON 内嵌进 DLL，首次运行释放到配置目录；解析层只替换显示文本，不修改 `Command` 对象 |
 | 收藏持久化 | `FavoriteCommands` 统一维护集合，增删即写回配置，命令页与收藏页共用 |
 | 设置页 | 直接绑定 `ConfigEntry`：滑杆在关闭菜单时落盘，开关与热键立即保存 |
 

@@ -16,7 +16,7 @@ namespace CasualtiesQuickMenu
     {
         public const string PluginGuid = "local.casualties.quickmenu";
         public const string PluginName = "Casualties Quick Menu";
-        public const string PluginVersion = "1.1.0";
+        public const string PluginVersion = "1.2.0";
 
         internal static ManualLogSource Log { get; private set; }
         internal static QuickMenuPlugin Instance { get; private set; }
@@ -57,7 +57,7 @@ namespace CasualtiesQuickMenu
                 "对击杀、重置技能、保存退出等破坏性命令要求 3 秒内二次确认。");
             Favorites = Config.Bind("General", "Favorites", string.Empty,
                 "收藏的命令名，逗号分隔。由界面自动维护，无需手动编辑。");
-            UiScale = Config.Bind("Interface", "UiScale", 1.0f,
+            UiScale = Config.Bind("Interface", "UiScale", 1.2f,
                 new ConfigDescription("界面缩放系数。", new AcceptableValueRange<float>(0.6f, 2.0f)));
 
             Opacity = Config.Bind("Interface", "Opacity", 0.92f,
@@ -77,6 +77,7 @@ namespace CasualtiesQuickMenu
                 "窗口左上角 Y 坐标；-1 表示自动居中。");
 
             FavoriteCommands.Load();
+            CommandText.Load();
 
             _harmony = new Harmony(PluginGuid);
             try

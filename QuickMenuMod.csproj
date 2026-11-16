@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>QuickMenu</AssemblyName>
     <RootNamespace>CasualtiesQuickMenu</RootNamespace>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>portable</DebugType>
@@ -32,6 +32,10 @@
       <HintPath>$(BepInExCore)\0Harmony.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(ManagedDir)\Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath>
       <Private>false</Private>
@@ -56,6 +60,13 @@
       <HintPath>$(ManagedDir)\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 命令词典随 DLL 内嵌，首次运行时释放到配置目录供玩家编辑 -->
+    <EmbeddedResource Include="translations\commands.zh-CN.json"
+                      WithCulture="false"
+                      LogicalName="QuickMenu.commands.zh-CN.json" />
   </ItemGroup>
 
   <Target Name="Deploy" AfterTargets="Build" Condition="Exists('$(BepInExCore)')">

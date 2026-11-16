@@ -33,6 +33,7 @@ namespace CasualtiesQuickMenu
         internal static Rect WindowRect = new Rect(0f, 0f, 1020f, 690f);
 
         private static bool _layoutReady;
+        private static bool _logged;
         private static bool _dragging;
         private static bool _resizing;
         private static Vector2 _dragOffset;
@@ -113,6 +114,15 @@ namespace CasualtiesQuickMenu
 
             EnsureLayout(vw, vh);
             HandleWindowInput(vw, vh);
+
+            if (!_logged)
+            {
+                _logged = true;
+                QuickMenuPlugin.Log?.LogInfo(
+                    $"界面几何：屏幕 {Screen.width}x{Screen.height}，缩放 {scale:F3}，" +
+                    $"视口 {vw:F0}x{vh:F0}，窗口 x={WindowRect.x:F0} y={WindowRect.y:F0} " +
+                    $"{WindowRect.width:F0}x{WindowRect.height:F0}");
+            }
 
             Rect win = WindowRect;
 
@@ -557,10 +567,8 @@ namespace CasualtiesQuickMenu
                 richText = true
             };
 
-            // 引擎默认 label 带有上下内边距，且动态字体在固定高度内会略微下沉，
-            // 导致汉字底部笔画被裁。这里清掉内边距并把文字整体上移 2px。
+            // 引擎默认 label 带有上下内边距，固定高度下会把文字下推导致底部被裁。
             s.padding = new RectOffset(0, 0, 0, 0);
-            s.contentOffset = new Vector2(0f, -2f);
             s.normal.textColor = color;
             return s;
         }
@@ -602,7 +610,8 @@ namespace CasualtiesQuickMenu
         internal static void Section(string title)
         {
             GUILayout.Space(3f);
-            GUILayout.Label(title, SectionTitle);
+            // 显式给足行高：自动高度对中文动态字体偏紧，标题会压到下一行。
+            GUILayout.Label(title, SectionTitle, GUILayout.Height(28f));
         }
 
         /// <summary>width 为 0 时按钮自动均分可用宽度，窗口缩放时不会溢出。</summary>

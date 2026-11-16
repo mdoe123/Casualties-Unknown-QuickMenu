@@ -58,7 +58,8 @@ namespace CasualtiesQuickMenu
 
                 GUILayout.BeginHorizontal();
 
-                if (GUILayout.Button("★ " + name, QuickMenuUI.BtnSmall,
+                string title = command != null ? CommandText.Name(command) : name;
+                if (GUILayout.Button("★ " + QuickMenuUI.Truncate(title, 12), QuickMenuUI.BtnSmall,
                         GUILayout.Width(176f), GUILayout.Height(28f)))
                 {
                     JumpTo(name);
@@ -66,7 +67,7 @@ namespace CasualtiesQuickMenu
 
                 GUILayout.Label(
                     command != null
-                        ? QuickMenuUI.Truncate(command.description, 60)
+                        ? QuickMenuUI.Truncate(CommandText.Description(command), 60)
                         : "命令已不存在（可能来自已移除的 Mod）",
                     QuickMenuUI.Muted, GUILayout.Width(descWidth), GUILayout.Height(28f));
 

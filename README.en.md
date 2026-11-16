@@ -22,7 +22,7 @@ The command list is read from `ConsoleScript.Commands` at runtime, so commands a
 | Items | Icon grid of 301 spawnable items, names follow the in-game language, with category filters and search |
 | Limbs | 9 limb cards showing skin/muscle health and injuries, with per-limb stop-bleeding, amputate, reattach |
 | Favorites | Saved commands on one page with one-click execution; parameterized ones jump back to the command list |
-| Commands | Full command list with search, favorites pinned on top, argument autocomplete |
+| Commands | Full command list with built-in Chinese names and descriptions, bilingual search, favorites pinned, argument autocomplete |
 | Log | Console output echo — command failures show up here |
 | Settings | Hotkey rebinding, UI scale and opacity, behavior toggles, clear favorites, reset window |
 
@@ -84,6 +84,17 @@ While the menu is open, character input (movement, attacks, item use) is suppres
 
 Actions on the Items and Limbs tabs are executed through the game's own commands: spawning an item is equivalent to typing `spawn <id> cursor 1 <amount>`, and stopping bleeding is `setlimbfield <limb> bleedAmount 0`.
 
+### Command translation
+
+The game's native console is English-only — command names and descriptions are hardcoded in `ConsoleScript` and are not part of the official Chinese language pack. This mod supplies a dictionary at the UI layer, **without modifying any game data**: the native console, other mods and the execution path still see the original English.
+
+- Dictionary file: `BepInEx/config/QuickMenu/commands.zh-CN.json`, generated on first run and safe to edit
+- Coverage: the 49 base-game commands (including argument labels); commands registered by other mods are not covered yet and fall back to English
+- Fallback chain: user dictionary → bundled dictionary → game text; a missing step never breaks rendering
+- After editing, press "Reload" on the Settings tab — no restart required
+
+Untranslated entries simply show their English name. The detail header always reads "Chinese name · English ID" so the real command stays copyable into the native console.
+
 ## Configuration
 
 Generated on first launch at `BepInEx/config/local.casualties.quickmenu.cfg`.
@@ -96,7 +107,7 @@ Generated on first launch at `BepInEx/config/local.casualties.quickmenu.cfg`.
 | `General/CloseAfterExecute` | `false` | Close the menu after running a command |
 | `General/ConfirmRiskyCommands` | `true` | Require a second click within 3 seconds for destructive commands |
 | `General/Favorites` | empty | Favorited command names, maintained by the UI |
-| `Interface/UiScale` | `1.0` | UI scale (0.6–2.0) |
+| `Interface/UiScale` | `1.2` | UI scale (0.6–2.0) |
 | `Interface/Opacity` | `0.92` | Panel opacity (0.3–1.0) |
 | `Interface/DimBackground` | `true` | Dim the screen behind the menu |
 | `Interface/WindowWidth` / `WindowHeight` | `1020` / `690` | Window size in design units |
@@ -148,6 +159,7 @@ Casualties-Unknown-QuickMenu/
 │  ├─ LimbsPage.cs          Limbs tab
 │  ├─ FavoritesPage.cs      Favorites tab
 │  ├─ FavoriteCommands.cs   Favorites store and persistence
+│  ├─ CommandText.cs        Command text translation (display only)
 │  ├─ CommandListPage.cs    Commands tab
 │  ├─ LogPage.cs            Log tab
 │  ├─ SettingsPage.cs       Settings tab
@@ -175,6 +187,7 @@ Casualties-Unknown-QuickMenu/
 | Grid performance | Row-level virtualization: only visible rows are laid out |
 | Limb state | Reads public fields on `body.limbs` every frame; render-only, never mutates |
 | Limb actions | Reuses `setlimbfield`, `amputate`, `reattach` with the limb's `GameObject.name` |
+| Command translation | A JSON dictionary is embedded in the DLL and unpacked to the config folder on first run; the resolver only swaps display text and never touches `Command` objects |
 | Favorites | A single `FavoriteCommands` store writes through to the config; both pages share it |
 | Settings tab | Binds `ConfigEntry` directly: sliders persist when the menu closes, toggles and hotkey save immediately |
 

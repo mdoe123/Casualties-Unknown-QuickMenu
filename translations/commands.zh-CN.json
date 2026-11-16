@@ -1,0 +1,243 @@
+{
+  "schema": 1,
+  "locale": "zh-CN",
+  "gameVersion": "1.0.1",
+  "note": "命令词典：键为游戏内原始命令名，只影响本 Mod 的界面显示，不会改动游戏原生控制台。可自行增删，缺失的条目会回退显示英文。",
+  "commands": {
+    "help": {
+      "name": "帮助",
+      "description": "显示全部命令列表。"
+    },
+    "heal": {
+      "name": "治疗",
+      "description": "完全治愈当前角色。",
+      "args": ["忽略断肢（true/false）"]
+    },
+    "coagulate": {
+      "name": "止血",
+      "description": "停止角色身上的所有出血。"
+    },
+    "kill": {
+      "name": "击杀",
+      "description": "把角色的脑部生命值清零，立即死亡。"
+    },
+    "spawn": {
+      "name": "生成实体",
+      "description": "在指定位置生成物品或建筑。",
+      "args": ["实体 ID", "位置", "状态值（0-1）", "数量"]
+    },
+    "spawncategory": {
+      "name": "按类别生成",
+      "description": "以零重力生成某个战利品池中的全部物品。",
+      "args": ["类别 ID", "位置"]
+    },
+    "tp": {
+      "name": "传送",
+      "description": "把角色传送到指定位置，留空则传送到光标处。",
+      "args": ["位置"]
+    },
+    "skiplayer": {
+      "name": "下一层",
+      "description": "不填层号则立即跳到下一层，填了则直接前往该层。",
+      "args": ["层号"]
+    },
+    "log": {
+      "name": "写入日志",
+      "description": "向控制台历史追加一段文字。",
+      "args": ["文本"]
+    },
+    "talk": {
+      "name": "说话",
+      "description": "让角色说出一句话。",
+      "args": ["文本"]
+    },
+    "alert": {
+      "name": "弹窗提示",
+      "description": "显示一个游戏内提示框。",
+      "args": ["是否重要（true/false）", "文本"]
+    },
+    "saveandquit": {
+      "name": "保存并退出",
+      "description": "立即存档并退回主菜单；再次载入会从当前层开头开始。"
+    },
+    "resetskills": {
+      "name": "重置技能",
+      "description": "把角色的所有技能等级清零。"
+    },
+    "timescale": {
+      "name": "时间流速",
+      "description": "设置时间倍率，不能设为 0。",
+      "args": ["倍率"]
+    },
+    "setconsoleheight": {
+      "name": "控制台高度",
+      "description": "设置原生控制台的高度。",
+      "args": ["高度"]
+    },
+    "setconsolecolor": {
+      "name": "控制台配色",
+      "description": "修改原生控制台某个元素的颜色。",
+      "args": ["元素", "颜色"]
+    },
+    "copylog": {
+      "name": "复制日志",
+      "description": "把整个控制台日志复制到剪贴板。"
+    },
+    "clear": {
+      "name": "清空日志",
+      "description": "清空控制台日志。"
+    },
+    "addxp": {
+      "name": "增加经验",
+      "description": "给角色指定技能增加经验。",
+      "args": ["技能（str/res/int）", "经验值"]
+    },
+    "applylayermodifier": {
+      "name": "应用层级修正",
+      "description": "对当前层应用指定的修饰符。",
+      "args": ["编号"]
+    },
+    "loglocale": {
+      "name": "打印本地化文本",
+      "description": "读取一条本地化字符串并输出到控制台。",
+      "args": ["类别", "键名"]
+    },
+    "nukeplayerprefs": {
+      "name": "清空游戏设置",
+      "description": "删除 PlayerPrefs 设置，会丢失全部进度！",
+      "args": ["键名"]
+    },
+    "openfolder": {
+      "name": "打开目录",
+      "description": "打开游戏的某个数据目录。",
+      "args": ["类型"]
+    },
+    "setbodyfield": {
+      "name": "修改身体字段",
+      "description": "设置角色身体上的一个字段。",
+      "args": ["字段名", "值"]
+    },
+    "setlimbfield": {
+      "name": "修改肢体字段",
+      "description": "设置角色某个肢体上的字段。",
+      "args": ["肢体名", "字段名", "值"]
+    },
+    "amputate": {
+      "name": "断肢",
+      "description": "立即截断一个肢体。",
+      "args": ["肢体名"]
+    },
+    "reattach": {
+      "name": "接回肢体",
+      "description": "把已截断的肢体接回去。",
+      "args": ["肢体名"]
+    },
+    "unchipped": {
+      "name": "无芯片模式",
+      "description": "开启或关闭「未植入芯片」模式。",
+      "args": ["开关（true/false）"]
+    },
+    "addcustomcommand": {
+      "name": "添加自定义命令",
+      "description": "向命令列表添加一条自定义命令。",
+      "args": ["名称", "描述", "动作"]
+    },
+    "addliquid": {
+      "name": "注入液体",
+      "description": "向主手物品中加入指定数量的液体。",
+      "args": ["液体 ID", "数量"]
+    },
+    "locate": {
+      "name": "定位实体",
+      "description": "按名称搜索目标并把角色传送到其中一个。",
+      "args": ["实体 ID", "序号"]
+    },
+    "removecustomcommand": {
+      "name": "移除自定义命令",
+      "description": "从列表中删除一条已添加的自定义命令。",
+      "args": ["名称"]
+    },
+    "music": {
+      "name": "音乐",
+      "description": "管理背景音乐：切歌、跳转播放进度或打开 MP3 菜单。",
+      "args": ["操作", "时间"]
+    },
+    "bind": {
+      "name": "按键绑定",
+      "description": "添加、删除或列出自定义命令的按键绑定。",
+      "args": ["操作", "按键", "操作"]
+    },
+    "repeat": {
+      "name": "重复执行",
+      "description": "按指定次数与间隔重复执行一串命令。",
+      "args": ["次数", "间隔秒", "命令"]
+    },
+    "explode": {
+      "name": "爆炸",
+      "description": "在指定位置制造爆炸，可细化伤害范围与概率。",
+      "args": [
+        "位置", "肌肉伤害范围", "皮肤伤害范围", "皮肤破损概率",
+        "骨折概率", "脱臼概率", "错位概率", "出血概率",
+        "出血范围", "结构伤害", "作用半径", "冲击速度",
+        "弹片概率", "音效"
+      ]
+    },
+    "floodfill": {
+      "name": "填充液体",
+      "description": "用指定液体填充一片区域，单次最多 2048 格。",
+      "args": ["位置", "液体类型"]
+    },
+    "spawncharacter": {
+      "name": "生成角色",
+      "description": "生成一个指定角色。",
+      "args": ["角色编号", "位置"]
+    },
+    "echo": {
+      "name": "命令回显",
+      "description": "开关：是否把新执行的命令写入日志。",
+      "args": ["开关（true/false）"]
+    },
+    "ui": {
+      "name": "界面开关",
+      "description": "显示或隐藏游戏主界面。"
+    },
+    "freecam": {
+      "name": "自由相机",
+      "description": "让相机脱离角色，用方向键单独控制。"
+    },
+    "starterkit": {
+      "name": "新手包",
+      "description": "生成一套半随机的容器、工具与药品，并按当前层给经验。"
+    },
+    "noclip": {
+      "name": "无碰撞",
+      "description": "开关穿墙：可飞行且不受地形阻挡。"
+    },
+    "playsound": {
+      "name": "播放音效",
+      "description": "播放指定 ID 的音效。",
+      "args": ["音效 ID"]
+    },
+    "fullbright": {
+      "name": "全亮",
+      "description": "开关调试用的全亮照明。"
+    },
+    "plushies": {
+      "name": "玩偶列队",
+      "description": "在角色面前排成一列生成所有种类的玩偶。"
+    },
+    "dunemode": {
+      "name": "沙丘模式",
+      "description": "we are duned（关闭游戏前一直生效）。"
+    },
+    "errorlogging": {
+      "name": "错误日志",
+      "description": "开关应用程序错误日志。"
+    },
+    "setachievement": {
+      "name": "解锁成就",
+      "description": "解锁指定成就。",
+      "args": ["成就"]
+    }
+  }
+}

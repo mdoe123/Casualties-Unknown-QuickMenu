@@ -17,6 +17,7 @@ namespace CasualtiesQuickMenu
 
         private string _search = string.Empty;
         private string _filterKey;
+        private int _translatedCount;
 
         private Vector2 _listScroll;
         private Vector2 _detailScroll;
@@ -49,7 +50,8 @@ namespace CasualtiesQuickMenu
                 _filterKey = null;
             }
 
-            GUILayout.Label($"共 {ConsoleBridge.Commands.Count} 条", QuickMenuUI.Muted, GUILayout.Width(90f));
+            GUILayout.Label($"共 {ConsoleBridge.Commands.Count} 条 · 译 {_translatedCount}",
+                QuickMenuUI.Muted, GUILayout.Width(120f));
             GUILayout.EndHorizontal();
 
             GUILayout.Space(4f);
@@ -74,6 +76,15 @@ namespace CasualtiesQuickMenu
             _filterKey = key;
             _filtered.Clear();
 
+            _translatedCount = 0;
+            foreach (Command each in ConsoleBridge.Commands)
+            {
+                if (CommandText.Has(each))
+                {
+                    _translatedCount++;
+                }
+            }
+
             foreach (Command command in ConsoleBridge.Commands)
             {
                 if (string.IsNullOrEmpty(_search) || Matches(command, _search))
@@ -93,13 +104,8 @@ namespace CasualtiesQuickMenu
 
         private static bool Matches(Command command, string query)
         {
-            if (command.name.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
-            {
-                return true;
-            }
-
-            return !string.IsNullOrEmpty(command.description)
-                   && command.description.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0;
+            // 同时匹配中文名、英文命令名与中英描述。
+            return CommandText.SearchBlob(command).IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private int CompareCommands(Command a, Command b)
@@ -117,7 +123,15 @@ namespace CasualtiesQuickMenu
 
         private void DrawList()
         {
-            GUILayout.BeginVertical(GUILayout.Width(QuickMenuUI.ListWidth));
+            // 列表宽度按可用空间收缩，给右侧详情区保留至少 400 单位，
+            // 否则窗口拖到最小尺寸时行内容会溢出到详情面板底下。
+            float listWidth = Mathf.Min(QuickMenuUI.ListWidth,
+                Mathf.Max(260f, QuickMenuUI.BodyWidth - 400f));
+
+            float buttonWidth = Mathf.Clamp(listWidth * 0.44f, 118f, 198f);
+            float descWidth = Mathf.Max(80f, listWidth - buttonWidth - 10f);
+
+            GUILayout.BeginVertical(GUILayout.Width(listWidth));
 
             _listScroll = GUILayout.BeginScrollView(_listScroll,
                 GUILayout.Height(Mathf.Max(160f, QuickMenuUI.BodyHeight - 96f)));
@@ -134,17 +148,18 @@ namespace CasualtiesQuickMenu
                     GUI.backgroundColor = new Color(0.30f, 0.50f, 0.80f);
                 }
 
-                string label = (FavoriteCommands.Contains(command.name) ? "★ " : string.Empty) + command.name;
+                string label = (FavoriteCommands.Contains(command.name) ? "★ " : string.Empty)
+                               + QuickMenuUI.Truncate(CommandText.Name(command), 12);
                 if (GUILayout.Button(label, QuickMenuUI.BtnSmall,
-                        GUILayout.Width(198f), GUILayout.Height(26f)))
+                        GUILayout.Width(buttonWidth), GUILayout.Height(26f)))
                 {
                     Select(command);
                 }
 
                 GUI.backgroundColor = prev;
 
-                GUILayout.Label(QuickMenuUI.Truncate(command.description, 30),
-                    QuickMenuUI.Muted, GUILayout.Width(240f), GUILayout.Height(26f));
+                GUILayout.Label(QuickMenuUI.Truncate(CommandText.Description(command), 30),
+                    QuickMenuUI.Muted, GUILayout.Width(descWidth), GUILayout.Height(26f));
 
                 GUILayout.EndHorizontal();
             }
@@ -172,8 +187,9 @@ namespace CasualtiesQuickMenu
                 return;
             }
 
-            GUILayout.Label(_selected.name, QuickMenuUI.SectionTitle);
-            GUILayout.Label(_selected.description, QuickMenuUI.Label);
+            GUILayout.Label(CommandText.Display(_selected), QuickMenuUI.SectionTitle);
+            GUILayout.Label(CommandText.Description(_selected), QuickMenuUI.Label,
+                GUILayout.Height(26f));
 
             GUILayout.Space(4f);
 
@@ -193,7 +209,7 @@ namespace CasualtiesQuickMenu
                     break;
                 }
 
-                GUILayout.Label(argDescriptions[i].shortDesc, QuickMenuUI.Muted);
+                GUILayout.Label(CommandText.ArgLabel(_selected, i), QuickMenuUI.Muted);
 
                 GUI.SetNextControlName("qm_arg_" + i);
                 _args[i] = GUILayout.TextField(_args[i] ?? string.Empty, QuickMenuUI.Field,
@@ -201,7 +217,8 @@ namespace CasualtiesQuickMenu
 
                 DrawAutofill(i);
 
-                if (!string.IsNullOrEmpty(argDescriptions[i].longDesc)
+                if (!CommandText.Has(_selected)
+                    && !string.IsNullOrEmpty(argDescriptions[i].longDesc)
                     && argDescriptions[i].longDesc != argDescriptions[i].shortDesc)
                 {
                     GUILayout.Label(argDescriptions[i].longDesc, QuickMenuUI.Muted);
