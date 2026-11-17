@@ -38,6 +38,10 @@ namespace CasualtiesQuickMenu
 
             _open = true;
 
+            // 必须在屏蔽输入之前取快照：命令执行时的光标已经被菜单按钮占住了。
+            AimPoint.Capture();
+            QuickMenuPlugin.Log?.LogInfo($"菜单打开，{AimPoint.Describe()}");
+
             ConsoleBridge.EnsureConsole();
 
             // 原生控制台与快捷菜单同时开启会争抢键盘输入，先让原生控制台收起。

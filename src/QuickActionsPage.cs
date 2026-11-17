@@ -77,7 +77,7 @@ namespace CasualtiesQuickMenu
             GUILayout.BeginHorizontal();
             if (QuickMenuUI.WideButton("传送到光标（tp）"))
             {
-                Run("tp", "传送");
+                Run($"tp {AimPoint.Resolve("cursor")}", "传送");
             }
 
             if (QuickMenuUI.WideButton("下一层（skiplayer）"))

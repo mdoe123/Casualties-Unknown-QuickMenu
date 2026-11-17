@@ -84,6 +84,8 @@ While the menu is open, character input (movement, attacks, item use) is suppres
 
 Actions on the Items and Limbs tabs are executed through the game's own commands: spawning an item is equivalent to typing `spawn <id> cursor 1 <amount>`, and stopping bleeding is `setlimbfield <limb> bleedAmount 0`.
 
+**A note on "at cursor" commands**: `tp` and `spawn ... cursor` read the mouse position at the moment they run, and by then the cursor sits on the menu button. The menu therefore snapshots the world position when it opens and substitutes it for `cursor` at execution time — point at the spot you want, then press `F8`. The current snapshot is shown at the bottom of the Items tab.
+
 ### Command translation
 
 The game's native console is English-only — command names and descriptions are hardcoded in `ConsoleScript` and are not part of the official Chinese language pack. This mod supplies a dictionary at the UI layer, **without modifying any game data**: the native console, other mods and the execution path still see the original English.

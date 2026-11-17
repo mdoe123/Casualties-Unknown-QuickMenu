@@ -278,6 +278,8 @@ namespace CasualtiesQuickMenu
 
             GUILayout.FlexibleSpace();
 
+            GUILayout.Label(AimPoint.Describe(), QuickMenuUI.Muted, GUILayout.Height(30f));
+
             GUILayout.Label("数量", QuickMenuUI.Label, GUILayout.Width(34f), GUILayout.Height(30f));
             _amount = GUILayout.TextField(_amount, QuickMenuUI.Field, GUILayout.Width(44f), GUILayout.Height(26f));
 
@@ -328,7 +330,7 @@ namespace CasualtiesQuickMenu
             amount = Mathf.Clamp(amount, 1, 20);
             _amount = amount.ToString();
 
-            string command = $"spawn {_selectedId} {position} 1 {amount}";
+            string command = $"spawn {_selectedId} {AimPoint.Resolve(position)} 1 {amount}";
 
             if (!ConsoleBridge.TryExecute(command, out string error))
             {
