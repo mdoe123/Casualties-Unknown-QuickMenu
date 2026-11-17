@@ -77,11 +77,6 @@ namespace CasualtiesQuickMenu
             GUILayout.BeginHorizontal();
             if (QuickMenuUI.WideButton("传送（tp）"))
             {
-                Run($"tp {AimPoint.Resolve("cursor")}", "传送");
-            }
-
-            if (QuickMenuUI.WideButton("点选传送"))
-            {
                 AimMode.Begin("tp {0}", "传送");
             }
 

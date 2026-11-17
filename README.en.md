@@ -84,9 +84,7 @@ While the menu is open, character input (movement, attacks, item use) is suppres
 
 Actions on the Items and Limbs tabs are executed through the game's own commands: spawning an item is equivalent to typing `spawn <id> cursor 1 <amount>`, and stopping bleeding is `setlimbfield <limb> bleedAmount 0`.
 
-**A note on "at cursor" commands**: `tp` and `spawn ... cursor` read the mouse position at the moment they run, and by then the cursor sits on the menu button. The menu therefore snapshots the world position when it opens and substitutes it for `cursor` at execution time — point at the spot you want, then press `F8`. The current snapshot is shown at the bottom of the Items tab.
-
-If you would rather decide the spot after opening the menu, use **point-and-click mode**: "Pick position" on the Items tab and "Pick teleport" on the Common tab. The menu closes, a hint appears at the bottom of the screen ("left click to confirm, right click / Esc to cancel"), and clicking the world runs the command and returns you to the menu.
+**"At cursor" actions ask for a position first.** `tp` and `spawn ... cursor` read the mouse position at the moment they run, and by then the cursor sits on the menu button, so the target would land inside the UI. "Spawn at cursor" and "Teleport" therefore close the menu and show a hint at the bottom of the screen ("left click to confirm, right click / Esc to cancel"); the command runs at the point you click and the menu reopens.
 
 ### Command translation
 

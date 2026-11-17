@@ -279,14 +279,12 @@ namespace CasualtiesQuickMenu
 
             GUILayout.FlexibleSpace();
 
-            GUILayout.Label(AimPoint.Describe(), QuickMenuUI.Muted, GUILayout.Height(30f));
-
             GUILayout.Label("数量", QuickMenuUI.Label, GUILayout.Width(34f), GUILayout.Height(30f));
             _amount = GUILayout.TextField(_amount, QuickMenuUI.Field, GUILayout.Width(44f), GUILayout.Height(26f));
 
             if (GUILayout.Button("生成到光标", QuickMenuUI.Btn, GUILayout.Width(100f), GUILayout.Height(30f)))
             {
-                Spawn("cursor");
+                BeginAim();
             }
 
             if (GUILayout.Button("生成到脚下", QuickMenuUI.Btn, GUILayout.Width(100f), GUILayout.Height(30f)))
@@ -299,10 +297,6 @@ namespace CasualtiesQuickMenu
                 Spawn("random");
             }
 
-            if (GUILayout.Button("点选位置", QuickMenuUI.Btn, GUILayout.Width(88f), GUILayout.Height(30f)))
-            {
-                BeginAim();
-            }
 
             GUILayout.EndHorizontal();
         }
@@ -357,7 +351,7 @@ namespace CasualtiesQuickMenu
             amount = Mathf.Clamp(amount, 1, 20);
             _amount = amount.ToString();
 
-            string command = $"spawn {_selectedId} {AimPoint.Resolve(position)} 1 {amount}";
+            string command = $"spawn {_selectedId} {position} 1 {amount}";
 
             if (!ConsoleBridge.TryExecute(command, out string error))
             {
