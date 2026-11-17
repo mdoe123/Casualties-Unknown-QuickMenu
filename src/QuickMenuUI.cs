@@ -628,8 +628,9 @@ namespace CasualtiesQuickMenu
             // 1) 引擎默认 label 的上下内边距会把文字下推；
             // 2) 动态字体的实际绘制高度比 CalcHeight 返回的行高多约 2px，
             //    自动高度的标签因此底部永远差一行像素。
-            s.padding = new RectOffset(0, 0, 0, 0);
-            s.contentOffset = new Vector2(0f, -2f);
+            // 动态字体实际绘制高度比 CalcHeight 返回的行高多约 2px，
+            // 底部加 4px 内边距把矩形撑高，汉字最后一横才不会被切。
+            s.padding = new RectOffset(0, 0, 0, 4);
             s.normal.textColor = color;
             return s;
         }
