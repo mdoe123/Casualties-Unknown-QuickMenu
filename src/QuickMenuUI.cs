@@ -425,6 +425,57 @@ namespace CasualtiesQuickMenu
             }
         }
 
+        /// <summary>
+        /// 自绘滑杆。Unity 自带的 GUILayout.HorizontalSlider 在本窗口的
+        /// 「缩放矩阵 + 滚动视图」环境下会丢拖拽状态（点击能赋值、拖动不跟随），
+        /// 因此这里直接处理 MouseDown / MouseDrag / MouseUp。
+        /// </summary>
+        internal static float DrawSlider(Rect rect, float value, float min, float max, ref bool dragging)
+        {
+            var track = new Rect(rect.x, rect.y + rect.height * 0.5f - 4f, rect.width, 8f);
+            FillRect(track, new Color(0.26f, 0.29f, 0.34f));
+
+            float t = Mathf.InverseLerp(min, max, value);
+            float thumbX = track.x + (track.width - 14f) * t;
+            var thumb = new Rect(thumbX, rect.y + rect.height * 0.5f - 9f, 14f, 18f);
+            FillRect(thumb, new Color(0.78f, 0.84f, 0.94f));
+
+            Event e = Event.current;
+            if (e == null)
+            {
+                return value;
+            }
+
+            Vector2 mouse = e.mousePosition;
+
+            if (e.type == EventType.MouseDown && e.button == 0 && rect.Contains(mouse))
+            {
+                dragging = true;
+                e.Use();
+            }
+
+            if (dragging && (e.type == EventType.MouseDrag || e.type == EventType.MouseUp || e.type == EventType.MouseDown))
+            {
+                float next = Mathf.Clamp01((mouse.x - track.x) / track.width);
+                value = Mathf.Lerp(min, max, next);
+
+                if (e.type == EventType.MouseUp)
+                {
+                    dragging = false;
+                }
+
+                e.Use();
+            }
+
+            // 指针移出窗口后松开时收不到 MouseUp，用轮询兜底。
+            if (dragging && !Input.GetMouseButton(0))
+            {
+                dragging = false;
+            }
+
+            return value;
+        }
+
         internal static void FillRect(Rect rect, Color color)
         {
             Fill(rect, color);

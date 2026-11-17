@@ -16,6 +16,8 @@ namespace CasualtiesQuickMenu
         private Vector2 _scroll;
         private bool _capturing;
         private float _draftScale = -1f;
+        private bool _scaleDragging;
+        private bool _opacityDragging;
 
         internal void Draw()
         {
@@ -220,10 +222,10 @@ namespace CasualtiesQuickMenu
             GUILayout.Label("界面缩放", QuickMenuUI.Label,
                 GUILayout.Width(LabelWidth), GUILayout.Height(26f));
 
-            float next = GUILayout.HorizontalSlider(_draftScale, 0.6f, 2f,
-                QuickMenuUI.SliderTrack, QuickMenuUI.SliderThumb,
+            Rect sliderRect = GUILayoutUtility.GetRect(300f, 22f,
                 GUILayout.Width(300f), GUILayout.Height(22f));
 
+            float next = QuickMenuUI.DrawSlider(sliderRect, _draftScale, 0.6f, 2f, ref _scaleDragging);
             if (!Mathf.Approximately(next, _draftScale))
             {
                 _draftScale = next;
@@ -233,23 +235,27 @@ namespace CasualtiesQuickMenu
                 GUILayout.Width(56f), GUILayout.Height(26f));
             GUILayout.EndHorizontal();
 
-            bool released = Event.current != null && Event.current.type == EventType.MouseUp;
-            if (released && !Mathf.Approximately(_draftScale, QuickMenuPlugin.UiScale.Value))
+            // 拖动过程只改草稿值，松手后一次性应用：缩放会改 GUI 矩阵，
+            // 边拖边应用会让鼠标坐标跳变。
+            if (!_scaleDragging && !Mathf.Approximately(_draftScale, QuickMenuPlugin.UiScale.Value))
             {
                 QuickMenuPlugin.UiScale.Value = _draftScale;
                 QuickMenuPlugin.Instance?.Config.Save();
             }
         }
 
-        private static void DrawSliderRow(string label, ConfigEntry<float> entry, float min, float max)
+        private void DrawSliderRow(string label, ConfigEntry<float> entry, float min, float max)
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(label, QuickMenuUI.Label,
                 GUILayout.Width(LabelWidth), GUILayout.Height(26f));
 
-            float next = GUILayout.HorizontalSlider(entry.Value, min, max,
-                QuickMenuUI.SliderTrack, QuickMenuUI.SliderThumb,
+            Rect sliderRect = GUILayoutUtility.GetRect(300f, 22f,
                 GUILayout.Width(300f), GUILayout.Height(22f));
+
+            bool dragging = _opacityDragging;
+            float next = QuickMenuUI.DrawSlider(sliderRect, entry.Value, min, max, ref dragging);
+            _opacityDragging = dragging;
 
             if (!Mathf.Approximately(next, entry.Value))
             {
