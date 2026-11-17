@@ -19,7 +19,7 @@ The command list is read from `ConsoleScript.Commands` at runtime, so commands a
 | Tab | Contents |
 |---|---|
 | Common | Heal, stop bleeding, kill, starter kit, teleport, next layer, noclip, freecam, timescale, skill XP, fullbright, save & quit, open native console |
-| Items | Icon grid of 301 spawnable items, names follow the in-game language, with category filters and search |
+| Spawn | Six kinds: items (301), buildings (88), traps (29), blocks (43), fluids (7), creatures (15) |
 | Limbs | 9 limb cards showing skin/muscle health and injuries, with per-limb stop-bleeding, amputate, reattach |
 | Favorites | Saved commands on one page with one-click execution; parameterized ones jump back to the command list |
 | Commands | Full command list with built-in Chinese names and descriptions, bilingual search, favorites pinned, argument autocomplete |
@@ -156,8 +156,9 @@ Casualties-Unknown-QuickMenu/
 │  ├─ QuickMenuPlugin.cs    Entry point, config, lifecycle
 │  ├─ QuickMenuUI.cs        Window chrome, drag/resize, styles
 │  ├─ QuickActionsPage.cs   Common tab
-│  ├─ ItemsPage.cs          Items tab
+│  ├─ SpawnPage.cs          Spawn tab (six kinds)
 │  ├─ ItemCatalog.cs        Item catalog and icons
+│  ├─ SpawnCatalog.cs       Building/trap/block/fluid/creature catalogs and placement
 │  ├─ LimbsPage.cs          Limbs tab
 │  ├─ FavoritesPage.cs      Favorites tab
 │  ├─ FavoriteCommands.cs   Favorites store and persistence
@@ -187,6 +188,8 @@ Casualties-Unknown-QuickMenu/
 | Item catalog | Scans `Resources` for prefabs with an `Item` component, caches id and `Sprite`; names resolved live from `Item.GlobalItems` / `Locale` |
 | Icon drawing | Converts `sprite.textureRect` to UVs and draws with `GUI.DrawTextureWithTexCoords`, so atlas sub-rects work |
 | Grid performance | Row-level virtualization: only visible rows are laid out |
+| Spawn data | Items from `Item.GlobalItems`; buildings/traps from `Resources` minus non-`BuildingEntity` prefabs; blocks from `GetBlockInfo(0..42)`; fluids by `FluidManager` index 1–7; creatures via the three `SpawnCharacter` indices |
+| Commandless placement | Blocks use `world.SetBlock`, fluids use `FluidManager.SetLiquid`/`StartFill`, buildings are instantiated directly with `blockPlacedOn` filled in — none of them touch the console |
 | Limb state | Reads public fields on `body.limbs` every frame; render-only, never mutates |
 | Limb actions | Reuses `setlimbfield`, `amputate`, `reattach` with the limb's `GameObject.name` |
 | Command translation | A JSON dictionary is embedded in the DLL and unpacked to the config folder on first run; the resolver only swaps display text and never touches `Command` objects |

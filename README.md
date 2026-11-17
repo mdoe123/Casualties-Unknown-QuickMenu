@@ -19,7 +19,7 @@
 | 页签 | 内容 |
 |---|---|
 | 常用 | 治疗、止血、击杀、新手包、传送、下一层、无碰撞、自由相机、时间倍率、技能经验、全亮、保存退出、打开原生控制台 |
-| 物品 | 301 个可生成物品的图标网格，按游戏语言显示名称，支持分类筛选与搜索 |
+| 生成 | 六个子类：物品（301）、建筑（88）、陷阱（29）、物块（43）、流体（7）、生物（15） |
 | 肢体 | 9 张肢体卡片，显示皮肤/肌肉健康与伤病状态，可按肢体止血、断肢、接回 |
 | 收藏 | 收藏的命令集中在一页，一键执行；需要参数的跳回命令页填写 |
 | 全部命令 | 全部命令列表，内置中文名与说明，中英双语可搜，支持收藏置顶与参数补全 |
@@ -156,8 +156,9 @@ Casualties-Unknown-QuickMenu/
 │  ├─ QuickMenuPlugin.cs    入口、配置、生命周期
 │  ├─ QuickMenuUI.cs        窗口框架、拖拽缩放、样式
 │  ├─ QuickActionsPage.cs   常用页
-│  ├─ ItemsPage.cs          物品页
+│  ├─ SpawnPage.cs          生成页（六类目标）
 │  ├─ ItemCatalog.cs        物品目录与图标
+│  ├─ SpawnCatalog.cs       建筑/陷阱/物块/流体/生物目录与放置动作
 │  ├─ LimbsPage.cs          肢体页
 │  ├─ FavoritesPage.cs      收藏页
 │  ├─ FavoriteCommands.cs   收藏状态与持久化
@@ -187,6 +188,8 @@ Casualties-Unknown-QuickMenu/
 | 物品目录 | 扫描 `Resources` 中含 `Item` 组件的预制体，缓存 id 与 `Sprite`；名称实时向 `Item.GlobalItems` / `Locale` 查询 |
 | 图标绘制 | 用 `sprite.textureRect` 换算 UV，`GUI.DrawTextureWithTexCoords` 支持图集子区域 |
 | 网格性能 | 行级虚拟化，只布局可见行，避免 300 个格子每帧全量绘制 |
+| 生成页数据 | 物品走 `Item.GlobalItems`；建筑/陷阱扫 `Resources` 里的 `BuildingEntity`；物块取 `GetBlockInfo(0..42)`；流体按 `FluidManager` 索引 1–7；生物用 `SpawnCharacter` 的 3 个索引 |
+| 无命令的放置 | 物块用 `world.SetBlock`、流体用 `FluidManager.SetLiquid`/`StartFill`、建筑直接实例化并补 `blockPlacedOn`，均不经过控制台 |
 | 肢体状态 | 每帧读取 `body.limbs` 的 `skinHealth` / `muscleHealth` / `bleedAmount` / `broken` 等公开字段，仅渲染不修改 |
 | 肢体操作 | 复用 `setlimbfield`、`amputate`、`reattach`，参数用肢体的 `GameObject.name` |
 | 命令翻译 | 词典 JSON 内嵌进 DLL，首次运行释放到配置目录；解析层只替换显示文本，不修改 `Command` 对象 |

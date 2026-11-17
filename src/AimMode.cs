@@ -12,7 +12,7 @@ namespace CasualtiesQuickMenu
     /// </summary>
     internal static class AimMode
     {
-        private static string _template;
+        private static Action<Vector2> _action;
         private static string _label;
         private static int _returnTab;
 
@@ -20,8 +20,28 @@ namespace CasualtiesQuickMenu
 
         internal static bool Active { get; private set; }
 
-        /// <summary>template 里用 {0} 占位位置参数，例如 "spawn bandage {0} 1 3"。</summary>
+        /// <summary>
+        /// template 里用 {0} 占位位置参数，例如 "spawn bandage {0} 1 3"。
+        /// </summary>
         internal static bool Begin(string template, string label)
+        {
+            return Begin(position =>
+            {
+                string point = string.Format(CultureInfo.InvariantCulture, "{0:0.##},{1:0.##}", position.x, position.y);
+                string command = string.Format(CultureInfo.InvariantCulture, template, point);
+
+                if (!ConsoleBridge.TryExecute(command, out string error))
+                {
+                    QuickMenuState.Notify("执行失败：" + error);
+                    return;
+                }
+
+                QuickMenuState.Notify($"{label} 已执行");
+            }, label);
+        }
+
+        /// <summary>直接调用游戏 API 的放置动作（方块、流体、建筑等没有控制台命令）。</summary>
+        internal static bool Begin(Action<Vector2> action, string label)
         {
             if (PlayerCamera.main == null)
             {
@@ -29,7 +49,7 @@ namespace CasualtiesQuickMenu
                 return false;
             }
 
-            _template = template;
+            _action = action;
             _label = label;
             _returnTab = QuickMenuUI.CurrentTab;
             Active = true;
@@ -76,16 +96,17 @@ namespace CasualtiesQuickMenu
         {
             Active = false;
 
-            string position = string.Format(CultureInfo.InvariantCulture, "{0:0.##},{1:0.##}", world.x, world.y);
-            string command = string.Format(CultureInfo.InvariantCulture, _template, position);
+            Action<Vector2> action = _action;
+            _action = null;
 
-            if (!ConsoleBridge.TryExecute(command, out string error))
+            try
             {
-                QuickMenuState.Notify("执行失败：" + error);
-                return;
+                action?.Invoke(world);
             }
-
-            QuickMenuState.Notify($"{_label} 已定位到 {position}");
+            catch (Exception e)
+            {
+                QuickMenuState.Notify("执行失败：" + e.Message);
+            }
 
             QuickMenuUI.CurrentTab = _returnTab;
             QuickMenuState.Open();

@@ -16,7 +16,7 @@ namespace CasualtiesQuickMenu
 
         private static readonly string[] TabNames =
         {
-            "常用", "物品", "肢体", "收藏", "全部命令", "日志", "设置"
+            "常用", "生成", "肢体", "收藏", "全部命令", "日志", "设置"
         };
 
         internal const int TabCommon = 0;
@@ -368,7 +368,7 @@ namespace CasualtiesQuickMenu
                     QuickActionsPage.Instance.Draw();
                     break;
                 case TabItems:
-                    ItemsPage.Instance.Draw();
+                    SpawnPage.Instance.Draw();
                     break;
                 case TabLimbs:
                     LimbsPage.Instance.Draw();
