@@ -28,7 +28,7 @@
 
 ## 界面
 
-![物品页](docs/02-items.png)
+![生成页](docs/02-spawn.png)
 
 物品图标取自游戏预制体的 `SpriteRenderer`，名称跟随游戏内语言设置（内置简体中文与英文）。
 

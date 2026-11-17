@@ -28,7 +28,7 @@ The command list is read from `ConsoleScript.Commands` at runtime, so commands a
 
 ## Screenshots
 
-![Items tab](docs/02-items.png)
+![Spawn tab](docs/02-spawn.png)
 
 Item icons come from each prefab's `SpriteRenderer`; names follow the game's language setting (the game ships English and Simplified Chinese).
 
