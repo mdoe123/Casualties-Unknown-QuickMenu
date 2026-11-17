@@ -624,8 +624,12 @@ namespace CasualtiesQuickMenu
                 richText = true
             };
 
-            // 引擎默认 label 带有上下内边距，固定高度下会把文字下推导致底部被裁。
+            // 两处都会让汉字底部被裁，缺一不可：
+            // 1) 引擎默认 label 的上下内边距会把文字下推；
+            // 2) 动态字体的实际绘制高度比 CalcHeight 返回的行高多约 2px，
+            //    自动高度的标签因此底部永远差一行像素。
             s.padding = new RectOffset(0, 0, 0, 0);
+            s.contentOffset = new Vector2(0f, -2f);
             s.normal.textColor = color;
             return s;
         }
