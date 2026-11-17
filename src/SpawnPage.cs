@@ -117,6 +117,7 @@ namespace CasualtiesQuickMenu
 
             EnsureCategories();
             DrawFilters();
+
             DrawGrid();
             DrawItemBar();
         }
@@ -252,7 +253,7 @@ namespace CasualtiesQuickMenu
 
         private void DrawGrid()
         {
-            float viewHeight = RemainingHeight(46f);
+            float viewHeight = ItemsViewHeight();
             float available = QuickMenuUI.BodyWidth - 18f;
             int columns = Mathf.Max(1, Mathf.FloorToInt(available / CellWidth));
             int rows = Mathf.CeilToInt(_filtered.Count / (float)columns);
@@ -302,7 +303,7 @@ namespace CasualtiesQuickMenu
 
         private void DrawEntityGrid(List<SpawnEntity> list, string emptyHint)
         {
-            float viewHeight = RemainingHeight(46f);
+            float viewHeight = EntityViewHeight();
             float available = QuickMenuUI.BodyWidth - 18f;
             int columns = Mathf.Max(1, Mathf.FloorToInt(available / CellWidth));
 
@@ -338,9 +339,10 @@ namespace CasualtiesQuickMenu
             }
             else
             {
-                GUILayout.Label(_selectedEntity.Name, QuickMenuUI.Label, GUILayout.Height(30f));
-                GUILayout.Label(QuickMenuUI.Truncate(_selectedEntity.Prefab.name, 18),
-                    QuickMenuUI.Muted, GUILayout.Height(30f));
+                GUILayout.Label(QuickMenuUI.Truncate(_selectedEntity.Name, 10), QuickMenuUI.Label,
+                    GUILayout.Width(150f), GUILayout.Height(30f));
+                GUILayout.Label(QuickMenuUI.Truncate(_selectedEntity.Prefab != null ? _selectedEntity.Prefab.name : string.Empty, 14),
+                    QuickMenuUI.Muted, GUILayout.Width(160f), GUILayout.Height(30f));
             }
 
             GUILayout.FlexibleSpace();
@@ -385,7 +387,7 @@ namespace CasualtiesQuickMenu
                 return;
             }
 
-            float viewHeight = RemainingHeight(16f);
+            float viewHeight = ListViewHeight();
             _entityScroll = GUILayout.BeginScrollView(_entityScroll, GUILayout.Height(viewHeight));
 
             GUILayout.Label("写入方块不做支撑校验，放错位置需要手动修回来。", QuickMenuUI.Muted);
@@ -424,7 +426,7 @@ namespace CasualtiesQuickMenu
 
         private void DrawFluidList()
         {
-            float viewHeight = RemainingHeight(16f);
+            float viewHeight = ListViewHeight();
             _entityScroll = GUILayout.BeginScrollView(_entityScroll, GUILayout.Height(viewHeight));
 
             foreach (FluidEntry fluid in SpawnCatalog.Fluids)
@@ -477,11 +479,27 @@ namespace CasualtiesQuickMenu
 
         // ---------- 通用 ----------
 
-        /// <summary>按「已经排布掉的高度」推算剩余空间，避免底部留出空白。</summary>
-        private static float RemainingHeight(float reserve)
+        // 各视图表头的实际高度（设计单位，实测所得）。
+        // 之前用 GUILayoutUtility.GetLastRect() 推算，某些事件帧返回零矩形，
+        // 会把滚动区算得过高、把底栏顶出可视区，故改为常量。
+        private const float ItemsHeaderHeight = 116f;
+        private const float EntityHeaderHeight = 46f;
+        private const float BarHeight = 38f;
+        private const float BottomMargin = 12f;
+
+        private static float ItemsViewHeight()
         {
-            Rect last = GUILayoutUtility.GetLastRect();
-            return Mathf.Max(120f, QuickMenuUI.BodyHeight - last.yMax - reserve);
+            return Mathf.Max(120f, QuickMenuUI.BodyHeight - ItemsHeaderHeight - BarHeight - 6f);
+        }
+
+        private static float EntityViewHeight()
+        {
+            return Mathf.Max(120f, QuickMenuUI.BodyHeight - EntityHeaderHeight - BarHeight - 6f);
+        }
+
+        private static float ListViewHeight()
+        {
+            return Mathf.Max(120f, QuickMenuUI.BodyHeight - EntityHeaderHeight - BottomMargin - 6f);
         }
 
         private static void DrawCell(string name, Sprite icon, bool selected, Action onClick)
