@@ -273,7 +273,8 @@ namespace CasualtiesQuickMenu
                 QuickMenuUI.DrawSprite(iconRect, FindIcon(_selectedId));
 
                 GUILayout.Label(ItemCatalog.DisplayName(_selectedId), QuickMenuUI.Label, GUILayout.Height(30f));
-                GUILayout.Label(_selectedId, QuickMenuUI.Muted, GUILayout.Height(30f));
+                GUILayout.Label(QuickMenuUI.Truncate(_selectedId, 14),
+                    QuickMenuUI.Muted, GUILayout.Height(30f));
             }
 
             GUILayout.FlexibleSpace();
@@ -298,7 +299,33 @@ namespace CasualtiesQuickMenu
                 Spawn("random");
             }
 
+            if (GUILayout.Button("点选位置", QuickMenuUI.Btn, GUILayout.Width(88f), GUILayout.Height(30f)))
+            {
+                BeginAim();
+            }
+
             GUILayout.EndHorizontal();
+        }
+
+        /// <summary>关掉菜单让玩家点地面，再以该点执行生成。</summary>
+        private void BeginAim()
+        {
+            if (string.IsNullOrEmpty(_selectedId))
+            {
+                QuickMenuState.Notify("请先选择一个物品。");
+                return;
+            }
+
+            if (!int.TryParse(_amount, out int amount))
+            {
+                amount = 1;
+            }
+
+            amount = Mathf.Clamp(amount, 1, 20);
+            _amount = amount.ToString();
+
+            AimMode.Begin($"spawn {_selectedId} {{0}} 1 {amount}",
+                $"生成 {ItemCatalog.DisplayName(_selectedId)} ×{amount}");
         }
 
         private static Sprite FindIcon(string id)

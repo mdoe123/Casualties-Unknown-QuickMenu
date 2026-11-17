@@ -16,7 +16,7 @@ namespace CasualtiesQuickMenu
     {
         public const string PluginGuid = "local.casualties.quickmenu";
         public const string PluginName = "Casualties Quick Menu";
-        public const string PluginVersion = "1.2.1";
+        public const string PluginVersion = "1.3.0";
 
         internal static ManualLogSource Log { get; private set; }
         internal static QuickMenuPlugin Instance { get; private set; }
@@ -96,6 +96,12 @@ namespace CasualtiesQuickMenu
 
         private void Update()
         {
+            if (AimMode.Active)
+            {
+                AimMode.Tick();
+                return;
+            }
+
             if (CapturingKey)
             {
                 return;
@@ -126,6 +132,12 @@ namespace CasualtiesQuickMenu
 
         private void OnGUI()
         {
+            if (AimMode.Active)
+            {
+                AimMode.DrawHint();
+                return;
+            }
+
             if (!QuickMenuState.IsOpen)
             {
                 return;

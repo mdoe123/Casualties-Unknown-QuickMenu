@@ -23,7 +23,7 @@ namespace CasualtiesQuickMenu
 
         private static bool Prefix()
         {
-            return !QuickMenuState.IsOpen || !QuickMenuPlugin.BlockGameInput.Value;
+            return !(QuickMenuState.IsOpen || AimMode.Active) || !QuickMenuPlugin.BlockGameInput.Value;
         }
     }
 

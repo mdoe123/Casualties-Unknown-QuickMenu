@@ -86,6 +86,8 @@ Actions on the Items and Limbs tabs are executed through the game's own commands
 
 **A note on "at cursor" commands**: `tp` and `spawn ... cursor` read the mouse position at the moment they run, and by then the cursor sits on the menu button. The menu therefore snapshots the world position when it opens and substitutes it for `cursor` at execution time — point at the spot you want, then press `F8`. The current snapshot is shown at the bottom of the Items tab.
 
+If you would rather decide the spot after opening the menu, use **point-and-click mode**: "Pick position" on the Items tab and "Pick teleport" on the Common tab. The menu closes, a hint appears at the bottom of the screen ("left click to confirm, right click / Esc to cancel"), and clicking the world runs the command and returns you to the menu.
+
 ### Command translation
 
 The game's native console is English-only — command names and descriptions are hardcoded in `ConsoleScript` and are not part of the official Chinese language pack. This mod supplies a dictionary at the UI layer, **without modifying any game data**: the native console, other mods and the execution path still see the original English.
